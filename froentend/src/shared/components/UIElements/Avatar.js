@@ -1,15 +1,8 @@
-import React from "react";
-import "./Avatar.css";
+import React from 'react';
 
-interface AvatarProps {
-  className?: string;
-  style?: object;
-  image: string;
-  alt: string;
-  width?: string;
-}
+import './Avatar.css';
 
-const Avatar = (props: AvatarProps): JSX.Element => {
+const Avatar = props => {
   return (
     <div className={`avatar ${props.className}`} style={props.style}>
       <img
