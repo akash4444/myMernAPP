@@ -1,31 +1,30 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext } from "react";
 
-import Card from '../../shared/components/UIElements/Card';
-import Input from '../../shared/components/FormElements/Input';
-import Button from '../../shared/components/FormElements/Button';
+import Card from "../../shared/components/UIElements/Card";
+import Input from "../../shared/components/FormElements/Input";
+import Button from "../../shared/components/FormElements/Button";
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
-  VALIDATOR_REQUIRE
-} from '../../shared/util/validators';
-import { useForm } from '../../shared/hooks/form-hook';
-import { AuthContext } from '../../shared/context/auth-context';
-import './Auth.css';
+  VALIDATOR_REQUIRE,
+} from "../../shared/util/validators";
+import { useForm } from "../../shared/hooks/form-hook";
+import "./Auth.css";
+import { connect } from "react-redux";
 
-const Auth = () => {
-  const auth = useContext(AuthContext);
+const Auth = ({ loginApiCall }) => {
   const [isLoginMode, setIsLoginMode] = useState(true);
 
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
-        value: '',
-        isValid: false
+        value: "",
+        isValid: false,
       },
       password: {
-        value: '',
-        isValid: false
-      }
+        value: "",
+        isValid: false,
+      },
     },
     false
   );
@@ -35,7 +34,7 @@ const Auth = () => {
       setFormData(
         {
           ...formState.inputs,
-          name: undefined
+          name: undefined,
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -44,20 +43,20 @@ const Auth = () => {
         {
           ...formState.inputs,
           name: {
-            value: '',
-            isValid: false
-          }
+            value: "",
+            isValid: false,
+          },
         },
         false
       );
     }
-    setIsLoginMode(prevMode => !prevMode);
+    setIsLoginMode((prevMode) => !prevMode);
   };
 
-  const authSubmitHandler = event => {
+  const authSubmitHandler = (event) => {
     event.preventDefault();
     console.log(formState.inputs);
-    auth.login();
+    loginApiCall(formState.inputs);
   };
 
   return (
@@ -95,14 +94,26 @@ const Auth = () => {
           onInput={inputHandler}
         />
         <Button type="submit" disabled={!formState.isValid}>
-          {isLoginMode ? 'LOGIN' : 'SIGNUP'}
+          {isLoginMode ? "LOGIN" : "SIGNUP"}
         </Button>
       </form>
       <Button inverse onClick={switchModeHandler}>
-        SWITCH TO {isLoginMode ? 'SIGNUP' : 'LOGIN'}
+        SWITCH TO {isLoginMode ? "SIGNUP" : "LOGIN"}
       </Button>
     </Card>
   );
 };
 
-export default Auth;
+const mapStateToProps = (state) => {
+  return {
+    profile: state,
+    loggedIn: state,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loginApiCall: (payload) => dispatch({ type: "LOGIN_USER", payload }),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);
